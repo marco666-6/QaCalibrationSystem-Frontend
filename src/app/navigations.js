@@ -1,84 +1,142 @@
 const navigations = [
   {
-    name: "Checksheets",
-    icon: "fact_check",
+    name: "Workspace",
+    icon: "space_dashboard",
     children: [
       {
-        name: "Transactions",
-        iconText: "CT",
-        path: "/checksheets/submissions"
+        name: "Ringkasan Aplikasi",
+        iconText: "WS",
+        path: "/operasional/workspace"
       },
       {
-        name: "Repair History",
-        iconText: "RH",
-        path: "/checksheets/repairs"
+        name: "Dashboard Operasional",
+        iconText: "DB",
+        path: "/operasional/dashboard"
       }
     ]
   },
   {
-    name: "Approvals",
-    icon: "verified",
+    name: "KSP",
+    icon: "savings",
     children: [
       {
-        name: "Pending My Action",
-        iconText: "PA",
-        path: "/approvals/pending"
+        name: "Master Anggota",
+        iconText: "AG",
+        path: "/ksp/anggota"
       },
       {
-        name: "Approval Templates",
-        iconText: "AT",
-        path: "/approvals/templates"
+        name: "Produk Simpanan",
+        iconText: "SP",
+        path: "/ksp/produk-simpanan"
       },
       {
-        name: "Pending Repairs",
-        iconText: "PR",
-        path: "/approvals/repairs"
-      }
-    ]
-  },
-  {
-    name: "Master Management",
-    icon: "group",
-    children: [
+        name: "Transaksi Simpanan",
+        iconText: "TS",
+        path: "/ksp/transaksi-simpanan"
+      },
       {
-        name: "User",
+        name: "Produk Pinjaman",
+        iconText: "PP",
+        path: "/ksp/produk-pinjaman"
+      },
+      {
+        name: "Pinjaman dan Cicilan",
+        iconText: "PJ",
+        path: "/ksp/pinjaman"
+      },
+      {
+        name: "Approval Pinjaman",
         iconText: "AP",
-        path: "/users"
+        path: "/ksp/approval-pinjaman"
       },
       {
-        name: "Form Templates",
-        iconText: "FT",
-        path: "/master/checksheet-templates"
+        name: "Approval Penarikan",
+        iconText: "AT",
+        path: "/ksp/approval-penarikan"
+      }
+    ]
+  },
+  {
+    name: "POS Waserda",
+    icon: "storefront",
+    children: [
+      {
+        name: "Dashboard Inventori",
+        iconText: "IV",
+        path: "/waserda/inventori/dashboard"
       },
       {
-        name: "Area Master",
-        iconText: "AM",
-        path: "/master/checksheet-areas"
+        name: "Master Produk",
+        iconText: "MP",
+        path: "/waserda/inventori/produk"
       },
       {
-        name: "Line Master",
-        iconText: "LM",
-        path: "/master/checksheet-line-masters"
+        name: "Kategori & Supplier",
+        iconText: "KS",
+        path: "/waserda/inventori/referensi"
       },
       {
-        name: "Group Master",
-        iconText: "GM",
-        path: "/master/checksheet-groups"
+        name: "Stok Masuk",
+        iconText: "SM",
+        path: "/waserda/inventori/stok-masuk"
       },
       {
-        name: "Checksheet Masters",
-        iconText: "CM",
-        path: "/master/checksheet-masters"
+        name: "Penyesuaian Stok",
+        iconText: "PS",
+        path: "/waserda/inventori/penyesuaian"
       },
       {
-        name: "Checksheet Lines",
-        iconText: "CL",
-        path: "/master/checksheet-lines"
+        name: "Penjualan",
+        iconText: "SL",
+        path: "/waserda/penjualan"
+      }
+    ]
+  },
+  {
+    name: "Laporan",
+    icon: "assessment",
+    children: [
+      {
+        name: "Ringkasan Penjualan",
+        iconText: "LP",
+        path: "/laporan/ringkasan-penjualan"
       },
       {
-        name: "Repairman Checker",
-        iconText: "RC",
-        path: "/master/repairman-checkers"
+        name: "Posisi Saldo Anggota",
+        iconText: "SA",
+        path: "/laporan/posisi-saldo-anggota"
+      }
+    ]
+  },
+  {
+    name: "Portal Anggota",
+    icon: "badge",
+    children: [
+      {
+        name: "Ringkasan Anggota",
+        iconText: "PA",
+        path: "/portal-anggota/ringkasan"
+      },
+      {
+        name: "Ajukan Pinjaman",
+        iconText: "AP",
+        path: "/portal-anggota/pengajuan-pinjaman"
+      },
+      {
+        name: "Ajukan Penarikan",
+        iconText: "AT",
+        path: "/portal-anggota/pengajuan-penarikan"
+      }
+    ]
+  },
+  {
+    name: "Administrasi",
+    icon: "admin_panel_settings",
+    children: [
+      {
+        name: "Pengguna Internal",
+        iconText: "UI",
+        path: "/administrasi/pengguna-internal"
       }
     ]
   }

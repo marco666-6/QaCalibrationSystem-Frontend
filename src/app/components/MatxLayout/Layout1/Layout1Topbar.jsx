@@ -11,6 +11,7 @@ import Home from "@mui/icons-material/Home";
 import Menu from "@mui/icons-material/Menu";
 import Person from "@mui/icons-material/Person";
 import PowerSettingsNew from "@mui/icons-material/PowerSettingsNew";
+import Chip from "@mui/material/Chip";
 
 import useAuth from "app/hooks/useAuth";
 import useSettings from "app/hooks/useSettings";
@@ -99,13 +100,21 @@ const Layout1Topbar = () => {
         </Box>
 
         <Box display="flex" alignItems="center">
-
+          {user?.role ? (
+            <Chip
+              size="small"
+              label={user.role}
+              color="secondary"
+              variant="filled"
+              sx={{ mr: 1.5, textTransform: "capitalize" }}
+            />
+          ) : null}
 
           <MatxMenu
             menuButton={
               <UserMenu>
                 <Span>
-                  Hi <strong>{user?.username}</strong>
+                  {user?.displayName || user?.fullName || user?.username}
                 </Span>
 
                 <Avatar src={user?.avatar} sx={{ cursor: "pointer" }} />
@@ -113,9 +122,9 @@ const Layout1Topbar = () => {
             }
           >
             <StyledItem>
-              <Link to="/">
+              <Link to="/operasional/workspace">
                 <Home />
-                <Span sx={{ marginInlineStart: 1 }}>Home</Span>
+                <Span sx={{ marginInlineStart: 1 }}>Workspace</Span>
               </Link>
             </StyledItem>
 

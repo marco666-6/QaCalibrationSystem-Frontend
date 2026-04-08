@@ -10,6 +10,13 @@ export default defineConfig({
     VitePWA({
       injectRegister: "auto",
       registerType: "autoUpdate",
+      manifest: {
+        name: "KSP POS Waserda",
+        short_name: "Koperasi",
+        theme_color: "#0d6efd",
+        background_color: "#ffffff",
+        display: "standalone"
+      },
       workbox: { clientsClaim: true, skipWaiting: true, maximumFileSizeToCacheInBytes: 9000000 }
     })
   ],

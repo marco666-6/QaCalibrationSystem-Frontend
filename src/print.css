@@ -1,0 +1,30 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .sale-receipt-dialog,
+  .sale-receipt-dialog * {
+    visibility: visible;
+  }
+
+  .sale-receipt-dialog {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .sale-receipt-dialog .MuiDialogActions-root,
+  .sale-receipt-print-hide {
+    display: none !important;
+  }
+
+  .sale-receipt-dialog .MuiPaper-root {
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+}

@@ -6,13 +6,12 @@ import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import LoadingButton from "@mui/lab/LoadingButton";
-
-import { useResetPassword } from "app/hooks/useAccount";
+import { useResetPassword } from "app/hooks/useProfile";
 import { Paragraph } from "app/components/Typography";
 import AuthLayout from "./components/AuthLayout";
 
 const validationSchema = Yup.object({
-  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Please confirm your new password")
@@ -22,22 +21,13 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const resetPasswordMutation = useResetPassword();
-
   const token = searchParams.get("token") || searchParams.get("code") || "";
-  const email = searchParams.get("email") || "";
-  const userId = searchParams.get("userId") || searchParams.get("user_id") || "";
-
   const missingToken = useMemo(() => token.trim().length === 0, [token]);
 
   const handleSubmit = async (values) => {
     await resetPasswordMutation.mutateAsync({
-      token,
-      code: token,
-      email: email || undefined,
-      userId: userId || undefined,
-      password: values.password,
+      resetToken: token,
       newPassword: values.password,
-      confirmPassword: values.confirmPassword,
       confirmNewPassword: values.confirmPassword
     });
 
@@ -82,11 +72,9 @@ export default function ResetPassword() {
             handleSubmit: submitForm
           }) => (
             <form onSubmit={submitForm}>
-              {email && (
-                <Alert severity="info" sx={{ mb: 2 }}>
-                  Resetting password for <strong>{email}</strong>
-                </Alert>
-              )}
+              <Alert severity="info" sx={{ mb: 2 }}>
+                Tautan reset sudah valid. Silakan set password baru.
+              </Alert>
 
               <TextField
                 fullWidth

@@ -6,12 +6,14 @@ import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import LoadingButton from "@mui/lab/LoadingButton";
-
 import useAuth from "app/hooks/useAuth";
+import { getTenantCode } from "/src/api/auth";
 import { Paragraph } from "app/components/Typography";
 import AuthLayout from "../components/AuthLayout";
 
 const initialValues = {
+  tenantCode: getTenantCode(),
+  memberNo: "",
   email: "",
   username: "",
   password: "",
@@ -19,9 +21,11 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object({
+  tenantCode: Yup.string().required("Tenant code is required"),
+  memberNo: Yup.string().max(50, "Member number is too long").required("Member number is required"),
   email: Yup.string().email("Enter a valid email").required("Email is required"),
   username: Yup.string().max(100, "Username is too long").required("Username is required"),
-  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Please confirm your password")
@@ -34,7 +38,6 @@ export default function JwtRegister() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-
     navigate(user?.mustChangePassword ? "/account/change-password" : "/", { replace: true });
   }, [isAuthenticated, navigate, user?.mustChangePassword]);
 
@@ -46,7 +49,9 @@ export default function JwtRegister() {
         values.email.trim(),
         values.username.trim(),
         values.password,
-        values.confirmPassword
+        values.confirmPassword,
+        values.memberNo.trim(),
+        values.tenantCode.trim()
       );
     } catch (error) {
       setErrorMessage(error?.response?.data?.message || error.message || "Registration failed.");
@@ -56,9 +61,9 @@ export default function JwtRegister() {
   return (
     <AuthLayout
       title="Create your account"
-      subtitle="Let users sign themselves up, then complete the rest of their profile after sign-in."
+      subtitle="Registrasi member self-service sesuai endpoint `register-member`."
       image="/assets/images/icon.svg"
-      imageAlt="MTA CheckSheet"
+      imageAlt="Koperasi register"
       footer={
         <Paragraph color="text.secondary">
           Already have an account?
@@ -68,11 +73,7 @@ export default function JwtRegister() {
         </Paragraph>
       }
     >
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
+      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
         {({
           values,
           errors,
@@ -88,6 +89,32 @@ export default function JwtRegister() {
                 {errorMessage}
               </Alert>
             )}
+
+            <TextField
+              fullWidth
+              size="small"
+              name="tenantCode"
+              label="Tenant Code"
+              value={values.tenantCode}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(touched.tenantCode && errors.tenantCode)}
+              helperText={touched.tenantCode && errors.tenantCode}
+              sx={{ mb: 2 }}
+            />
+
+            <TextField
+              fullWidth
+              size="small"
+              name="memberNo"
+              label="Member Number"
+              value={values.memberNo}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(touched.memberNo && errors.memberNo)}
+              helperText={touched.memberNo && errors.memberNo}
+              sx={{ mb: 2 }}
+            />
 
             <TextField
               fullWidth
@@ -144,13 +171,7 @@ export default function JwtRegister() {
               sx={{ mb: 3 }}
             />
 
-            <LoadingButton
-              fullWidth
-              type="submit"
-              variant="contained"
-              loading={isSubmitting}
-              sx={{ py: 1.1 }}
-            >
+            <LoadingButton fullWidth type="submit" variant="contained" loading={isSubmitting} sx={{ py: 1.1 }}>
               Create Account
             </LoadingButton>
           </form>

@@ -17,7 +17,7 @@ import {
 import Grid2 from "@mui/material/Grid2";
 
 import useAuth from "app/hooks/useAuth";
-import { useChangePassword, useMyProfile, useUpdateMyProfile } from "app/hooks/useAccount";
+import { useChangePassword, useMyProfile, useUpdateMyProfile } from "app/hooks/useProfile";
 
 const profileSchema = Yup.object({
   fullName: Yup.string().max(150, "Full name is too long").required("Full name is required"),
@@ -38,10 +38,10 @@ const passwordSchema = Yup.object({
 const normalizeProfile = (data, fallbackUser) => ({
   id: data?.userId ?? data?.id ?? fallbackUser?.id,
   username: data?.username ?? fallbackUser?.username ?? "",
-  fullName: data?.fullName ?? data?.fullname ?? data?.name ?? fallbackUser?.fullName ?? "",
+  fullName: data?.displayName ?? data?.fullName ?? data?.fullname ?? data?.name ?? fallbackUser?.fullName ?? "",
   email: data?.email ?? fallbackUser?.email ?? "",
-  role: data?.role ?? fallbackUser?.role ?? "",
-  employeeId: data?.employeeId ?? fallbackUser?.employeeId ?? "",
+  role: data?.roles?.[0] ?? data?.role ?? fallbackUser?.role ?? "",
+  employeeId: data?.employeeCode ?? data?.employeeId ?? fallbackUser?.employeeId ?? "",
   phoneNumber: data?.phoneNumber ?? fallbackUser?.phoneNumber ?? "",
   department: data?.department ?? fallbackUser?.department ?? "",
   mustChangePassword: Boolean(data?.mustChangePassword ?? fallbackUser?.mustChangePassword)
@@ -75,11 +75,8 @@ export default function ProfilePage() {
     validationSchema: profileSchema,
     onSubmit: async (values) => {
       await updateProfileMutation.mutateAsync({
-        id: profile.id,
-        userId: profile.id,
         username: profile.username,
-        fullName: values.fullName.trim(),
-        name: values.fullName.trim(),
+        displayName: values.fullName.trim(),
         email: values.email.trim(),
         phoneNumber: values.phoneNumber?.trim() || null
       });
@@ -103,10 +100,7 @@ export default function ProfilePage() {
     onSubmit: async (values, helpers) => {
       await changePasswordMutation.mutateAsync({
         currentPassword: values.currentPassword,
-        oldPassword: values.currentPassword,
-        password: values.newPassword,
         newPassword: values.newPassword,
-        confirmPassword: values.confirmPassword,
         confirmNewPassword: values.confirmPassword
       });
 

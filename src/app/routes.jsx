@@ -5,24 +5,34 @@ import Loadable from "./components/Loadable";
 import MatxLayout from "./components/MatxLayout/MatxLayout";
 import sessionRoutes from "./views/sessions/session-routes";
 import materialRoutes from "app/views/material-kit/MaterialRoutes";
-const UsersPage = Loadable(lazy(() => import("app/views/users/UsersPage")));
-const ChecksheetAreasPage = Loadable(lazy(() => import("app/views/master/ChecksheetAreasPage")));
-const ChecksheetLineMastersPage = Loadable(lazy(() => import("app/views/master/ChecksheetLineMastersPage")));
-const ChecksheetGroupsPage = Loadable(lazy(() => import("app/views/master/ChecksheetGroupsPage")));
-const ChecksheetMastersPage = Loadable(lazy(() => import("app/views/master/ChecksheetMastersPage")));
-const ChecksheetLinesPage = Loadable(lazy(() => import("app/views/master/ChecksheetLinesPage")));
-const RepairmanCheckersPage = Loadable(lazy(() => import("app/views/master/RepairmanCheckersPage")));
-const ChecksheetTemplatesPage = Loadable(lazy(() => import("app/views/checksheets/ChecksheetTemplatesPage")));
-const ChecksheetSubmissionsPage = Loadable(lazy(() => import("app/views/checksheets/ChecksheetSubmissionsPage")));
-const ChecksheetRepairHistoryPage = Loadable(lazy(() => import("app/views/checksheets/ChecksheetRepairHistoryPage")));
-const ChecksheetSubmissionDetailPage = Loadable(lazy(() => import("app/views/checksheets/ChecksheetSubmissionDetailPage")));
-const ChecksheetSubmissionMonthlyPage = Loadable(lazy(() => import("app/views/checksheets/ChecksheetSubmissionMonthlyPage")));
-const PendingApprovalsPage = Loadable(lazy(() => import("app/views/checksheets/PendingApprovalsPage")));
-const PendingRepairApprovalsPage = Loadable(lazy(() => import("app/views/checksheets/PendingRepairApprovalsPage")));
-const ApprovalTemplatesPage = Loadable(lazy(() => import("app/views/checksheets/ApprovalTemplatesPage")));
+
+const OperationsOverviewPage = Loadable(lazy(() => import("app/views/workspace/overview/OperationsOverviewPage")));
+const OperationalDashboardPage = Loadable(lazy(() => import("app/views/workspace/overview/OperationalDashboardPage")));
+const MemberRegistryPage = Loadable(lazy(() => import("app/views/workspace/ksp/MemberRegistryPage")));
+const SavingsProductsCatalogPage = Loadable(lazy(() => import("app/views/workspace/ksp/SavingsProductsCatalogPage")));
+const SavingsTransactionsPage = Loadable(lazy(() => import("app/views/workspace/ksp/SavingsTransactionsPage")));
+const LoanProductsCatalogPage = Loadable(lazy(() => import("app/views/workspace/ksp/LoanProductsCatalogPage")));
+const LoansManagementPage = Loadable(lazy(() => import("app/views/workspace/ksp/LoansManagementPage")));
+const LoanRequestsApprovalPage = Loadable(lazy(() => import("app/views/workspace/ksp/LoanRequestsApprovalPage")));
+const WithdrawalRequestsApprovalPage = Loadable(lazy(() => import("app/views/workspace/ksp/WithdrawalRequestsApprovalPage")));
+const InventoryOverviewPage = Loadable(lazy(() => import("app/views/workspace/waserda/InventoryOverviewPage")));
+const InventoryProductsPage = Loadable(lazy(() => import("app/views/workspace/waserda/InventoryProductsPage")));
+const InventoryReferencesPage = Loadable(lazy(() => import("app/views/workspace/waserda/InventoryReferencesPage")));
+const InventoryStockReceiptsPage = Loadable(lazy(() => import("app/views/workspace/waserda/InventoryStockReceiptsPage")));
+const InventoryStockReceiptsEntryPage = Loadable(lazy(() => import("app/views/workspace/waserda/InventoryStockReceiptsEntryPage")));
+const InventoryStockControlPage = Loadable(lazy(() => import("app/views/workspace/waserda/InventoryStockControlPage")));
+const InventoryStockControlEntryPage = Loadable(lazy(() => import("app/views/workspace/waserda/InventoryStockControlEntryPage")));
+const SalesOverviewPage = Loadable(lazy(() => import("app/views/workspace/waserda/SalesOverviewPage")));
+const SalesCheckoutPage = Loadable(lazy(() => import("app/views/workspace/waserda/SalesCheckoutPage")));
+const SalesSummaryPage = Loadable(lazy(() => import("app/views/workspace/reports/SalesSummaryPage")));
+const MemberBalancesPage = Loadable(lazy(() => import("app/views/workspace/reports/MemberBalancesPage")));
+const MemberPortalPage = Loadable(lazy(() => import("app/views/workspace/member-portal/MemberPortalPage")));
+const MemberLoanRequestPage = Loadable(lazy(() => import("app/views/workspace/member-portal/MemberLoanRequestPage")));
+const MemberWithdrawalRequestPage = Loadable(lazy(() => import("app/views/workspace/member-portal/MemberWithdrawalRequestPage")));
+const InternalUsersPage = Loadable(lazy(() => import("app/views/workspace/administration/InternalUsersPage")));
 
 const routes = [
-  { path: "/", element: <Navigate to="checksheets/submissions" /> },
+  { path: "/", element: <Navigate to="/operasional/workspace" replace /> },
   {
     element: (
       <AuthGuard>
@@ -31,27 +41,32 @@ const routes = [
     ),
     children: [
       ...materialRoutes,
-      { path: "/users", element: <UsersPage /> },
-      { path: "/master/checksheet-areas", element: <ChecksheetAreasPage /> },
-      { path: "/master/checksheet-line-masters", element: <ChecksheetLineMastersPage /> },
-      { path: "/master/checksheet-groups", element: <ChecksheetGroupsPage /> },
-      { path: "/master/checksheet-masters", element: <ChecksheetMastersPage /> },
-      { path: "/master/checksheet-lines", element: <ChecksheetLinesPage /> },
-      { path: "/master/repairman-checkers", element: <RepairmanCheckersPage /> },
-      { path: "/master/checksheet-templates", element: <ChecksheetTemplatesPage /> },
-      { path: "/master/checksheet-templates/new", element: <ChecksheetTemplatesPage /> },
-      { path: "/master/checksheet-templates/:id/edit", element: <ChecksheetTemplatesPage /> },
-      { path: "/checksheets/templates", element: <Navigate to="/master/checksheet-templates" replace /> },
-      { path: "/checksheets/submissions", element: <ChecksheetSubmissionsPage /> },
-      { path: "/checksheets/repairs", element: <ChecksheetRepairHistoryPage /> },
-      { path: "/checksheets/submissions/:id", element: <ChecksheetSubmissionDetailPage /> },
-      { path: "/checksheets/submissions/:id/monthly", element: <ChecksheetSubmissionMonthlyPage /> },
-      { path: "/approvals/pending", element: <PendingApprovalsPage /> },
-      { path: "/approvals/repairs", element: <PendingRepairApprovalsPage /> },
-      { path: "/approvals/templates", element: <ApprovalTemplatesPage /> }
+      { path: "/operasional/workspace", element: <OperationsOverviewPage /> },
+      { path: "/operasional/dashboard", element: <OperationalDashboardPage /> },
+      { path: "/ksp/anggota", element: <MemberRegistryPage /> },
+      { path: "/ksp/produk-simpanan", element: <SavingsProductsCatalogPage /> },
+      { path: "/ksp/transaksi-simpanan", element: <SavingsTransactionsPage /> },
+      { path: "/ksp/produk-pinjaman", element: <LoanProductsCatalogPage /> },
+      { path: "/ksp/pinjaman", element: <LoansManagementPage /> },
+      { path: "/ksp/approval-pinjaman", element: <LoanRequestsApprovalPage /> },
+      { path: "/ksp/approval-penarikan", element: <WithdrawalRequestsApprovalPage /> },
+      { path: "/waserda/inventori/dashboard", element: <InventoryOverviewPage /> },
+      { path: "/waserda/inventori/produk", element: <InventoryProductsPage /> },
+      { path: "/waserda/inventori/referensi", element: <InventoryReferencesPage /> },
+      { path: "/waserda/inventori/stok-masuk", element: <InventoryStockReceiptsPage /> },
+      { path: "/waserda/inventori/stok-masuk/entry", element: <InventoryStockReceiptsEntryPage /> },
+      { path: "/waserda/inventori/penyesuaian", element: <InventoryStockControlPage /> },
+      { path: "/waserda/inventori/penyesuaian/entry", element: <InventoryStockControlEntryPage /> },
+      { path: "/waserda/penjualan", element: <SalesOverviewPage /> },
+      { path: "/waserda/penjualan/kasir", element: <SalesCheckoutPage /> },
+      { path: "/laporan/ringkasan-penjualan", element: <SalesSummaryPage /> },
+      { path: "/laporan/posisi-saldo-anggota", element: <MemberBalancesPage /> },
+      { path: "/portal-anggota/ringkasan", element: <MemberPortalPage /> },
+      { path: "/portal-anggota/pengajuan-pinjaman", element: <MemberLoanRequestPage /> },
+      { path: "/portal-anggota/pengajuan-penarikan", element: <MemberWithdrawalRequestPage /> },
+      { path: "/administrasi/pengguna-internal", element: <InternalUsersPage /> }
     ]
   },
-
   ...sessionRoutes
 ];
 

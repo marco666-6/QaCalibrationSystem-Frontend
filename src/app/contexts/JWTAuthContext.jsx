@@ -2,10 +2,8 @@ import { createContext, useEffect, useReducer } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import Loading from "app/components/MatxLoading";
-import { registerUser } from "/src/api/account";
-import { getMyProfile } from "/src/api/account";
-
-const API_BASE = import.meta.env.VITE_API_ENDPOINT;
+import { getTenantCode, loginUser, registerMember } from "/src/api/auth";
+import { getMyProfile } from "/src/api/profile";
 
 const initialState = {
   user: null,
@@ -15,81 +13,59 @@ const initialState = {
 
 const claim = (decodedToken, ...keys) => {
   for (const key of keys) {
-    if (decodedToken?.[key] !== undefined) {
-      return decodedToken[key];
-    }
+    if (decodedToken?.[key] !== undefined) return decodedToken[key];
   }
-
   return undefined;
 };
 
 const isValidToken = (accessToken) => {
   if (!accessToken) return false;
   const decodedToken = jwtDecode(accessToken);
-
-  return decodedToken?.sub ? true : false;
+  return Boolean(decodedToken?.sub);
 };
 
 const setSession = (accessToken, refreshToken) => {
   if (accessToken) {
     localStorage.setItem("accessToken", accessToken);
-    if (refreshToken) {
-      localStorage.setItem("refreshToken", refreshToken);
-    }
+    if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-  } else {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    delete axios.defaults.headers.common.Authorization;
-  }
-};
-
-const toBoolean = (value) => {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "string") {
-    const normalized = value.trim().toLowerCase();
-    if (["true", "1", "yes"].includes(normalized)) return true;
-    if (["false", "0", "no", ""].includes(normalized)) return false;
+    return;
   }
 
-  if (typeof value === "number") return value === 1;
-
-  return Boolean(value);
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  delete axios.defaults.headers.common.Authorization;
 };
 
 const buildUser = (data) => ({
   id: data.userId ?? data.id,
   username: data.username,
-  fullName: data.fullName ?? data.fullname ?? data.name,
+  fullName: data.displayName ?? data.fullName ?? data.name,
+  displayName: data.displayName ?? data.fullName ?? data.name,
   email: data.email,
-  role: data.role,
-  employeeId: data.employeeId,
-  mustChangePassword: toBoolean(data.mustChangePassword),
+  role: Array.isArray(data.roles) ? data.roles[0] : data.role,
+  roles: data.roles ?? (data.role ? [data.role] : []),
+  employeeId: data.employeeCode ?? data.employeeId,
+  tenantId: data.tenantId,
+  tenantCode: data.tenantCode ?? getTenantCode(),
+  userType: data.userType,
+  memberId: data.memberId,
+  mustChangePassword: Boolean(data.mustChangePassword),
   isActive: data.isActive,
-  phoneNumber: data.phoneNumber,
-  department: data.department
+  phoneNumber: data.phoneNumber
 });
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "INIT": {
-      const { isAuthenticated, user } = action.payload;
-      return { ...state, user, isAuthenticated, isInitialized: true };
-    }
-    case "LOGIN": {
-      const { user } = action.payload;
-      return { ...state, user, isAuthenticated: true };
-    }
-    case "LOGOUT": {
+    case "INIT":
+      return { ...state, user: action.payload.user, isAuthenticated: action.payload.isAuthenticated, isInitialized: true };
+    case "LOGIN":
+    case "REGISTER":
+      return { ...state, user: action.payload.user, isAuthenticated: true };
+    case "LOGOUT":
       return { ...state, isAuthenticated: false, user: null };
-    }
-    case "REGISTER": {
-      const { user } = action.payload;
-      return { ...state, isAuthenticated: true, user };
-    }
-    default: {
+    default:
       return state;
-    }
   }
 };
 
@@ -102,42 +78,35 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const login = async (username, password) => {
-    const response = await axios.post(`${API_BASE}/Auth/login`, {
-      username,
-      password
-    });
+    const response = await loginUser({ username, password });
+    const { success, message, data } = response;
+    if (!success) throw new Error(message || "Invalid username or password.");
 
-    const { success, message, data } = response.data;
-
-    if (!success) {
-      throw new Error(message || "Invalid username or password.");
-    }
-
-    const { token, refreshToken } = data;
-    const user = buildUser(data);
-
-    setSession(token, refreshToken);
-    dispatch({ type: "LOGIN", payload: { user } });
+    setSession(data.token, data.refreshToken);
+    dispatch({ type: "LOGIN", payload: { user: buildUser(data) } });
   };
 
-  const register = async (email, username, password, confirmPassword = password) => {
-    const response = await registerUser({
-      email,
+  const register = async (
+    email,
+    username,
+    password,
+    confirmPassword = password,
+    memberNo = username,
+    tenantCode = getTenantCode()
+  ) => {
+    const response = await registerMember({
+      tenantCode,
+      memberNo,
       username,
+      email,
       password,
       confirmPassword
     });
     const { success, message, data } = response;
+    if (!success) throw new Error(message || "Registration failed.");
 
-    if (!success) {
-      throw new Error(message || "Registration failed.");
-    }
-
-    const { token, refreshToken } = data;
-    const user = buildUser(data);
-
-    setSession(token, refreshToken);
-    dispatch({ type: "REGISTER", payload: { user } });
+    setSession(data.token, data.refreshToken);
+    dispatch({ type: "REGISTER", payload: { user: buildUser(data) } });
   };
 
   const logout = () => {
@@ -167,40 +136,27 @@ export const AuthProvider = ({ children }) => {
             user = buildUser({
               id: claim(decoded, "sub", "nameid"),
               username: claim(decoded, "unique_name", "username"),
-              fullName: claim(decoded, "name", "fullName"),
+              displayName: claim(decoded, "name", "display_name", "fullName"),
               email: claim(decoded, "email"),
-              role: claim(
-                decoded,
-                "role",
-                "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-              ),
-              employeeId: claim(decoded, "employee_id", "employeeId"),
-              mustChangePassword: claim(
-                decoded,
-                "mustChangePassword",
-                "must_change_password",
-                "force_password_change"
-              )
+              roles: claim(decoded, "roles") ?? [
+                claim(decoded, "role", "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+              ].filter(Boolean),
+              employeeCode: claim(decoded, "employee_code", "employeeId"),
+              tenantId: claim(decoded, "tenant_id", "tenantId"),
+              memberId: claim(decoded, "member_id", "memberId"),
+              userType: claim(decoded, "user_type", "userType"),
+              mustChangePassword: claim(decoded, "mustChangePassword", "must_change_password", "force_password_change")
             });
           }
 
-          dispatch({
-            type: "INIT",
-            payload: { isAuthenticated: true, user }
-          });
-        } else {
-          console.log("No valid token found, logging out", accessToken);
-          dispatch({
-            type: "INIT",
-            payload: { isAuthenticated: false, user: null }
-          });
+          dispatch({ type: "INIT", payload: { isAuthenticated: true, user } });
+          return;
         }
-      } catch (err) {
-        console.error(err);
-        dispatch({
-          type: "INIT",
-          payload: { isAuthenticated: false, user: null }
-        });
+
+        dispatch({ type: "INIT", payload: { isAuthenticated: false, user: null } });
+      } catch (error) {
+        console.error(error);
+        dispatch({ type: "INIT", payload: { isAuthenticated: false, user: null } });
       }
     })();
   }, []);
@@ -208,8 +164,7 @@ export const AuthProvider = ({ children }) => {
   if (!state.isInitialized) return <Loading />;
 
   return (
-    <AuthContext.Provider
-      value={{ ...state, method: "JWT", login, logout, refreshUser, register }}>
+    <AuthContext.Provider value={{ ...state, method: "JWT", login, logout, refreshUser, register }}>
       {children}
     </AuthContext.Provider>
   );

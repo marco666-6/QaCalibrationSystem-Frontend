@@ -4,16 +4,18 @@ import * as Yup from "yup";
 import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import LoadingButton from "@mui/lab/LoadingButton";
-
-import { useForgotPassword } from "app/hooks/useAccount";
+import { getTenantCode } from "/src/api/auth";
+import { useForgotPassword } from "app/hooks/useProfile";
 import AuthLayout from "./components/AuthLayout";
 
 const initialValues = {
-  email: ""
+  tenantCode: getTenantCode(),
+  usernameOrEmail: ""
 };
 
 const validationSchema = Yup.object({
-  email: Yup.string().email("Enter a valid email").required("Email is required")
+  tenantCode: Yup.string().required("Tenant code is required"),
+  usernameOrEmail: Yup.string().required("Username atau email wajib diisi")
 });
 
 export default function ForgotPassword() {
@@ -22,12 +24,13 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (values, { resetForm }) => {
     const response = await forgotPasswordMutation.mutateAsync({
-      email: values.email.trim()
+      tenantCode: values.tenantCode.trim(),
+      usernameOrEmail: values.usernameOrEmail.trim()
     });
 
     setSuccessMessage(
       response?.message ||
-      "If an account exists for that email, password reset instructions have been sent."
+      "Jika akun ditemukan, instruksi reset password sudah dikirim."
     );
     resetForm();
   };
@@ -35,9 +38,9 @@ export default function ForgotPassword() {
   return (
     <AuthLayout
       title="Forgot your password?"
-      subtitle="Enter your email address and we will start the password recovery flow."
+      subtitle="Masukkan tenant code dan username atau email sesuai kontrak backend autentikasi."
       image="/assets/images/icon.svg"
-      imageAlt="MTA CheckSheet"
+      imageAlt="Koperasi auth"
     >
       <Formik
         initialValues={initialValues}
@@ -63,14 +66,26 @@ export default function ForgotPassword() {
             <TextField
               fullWidth
               size="small"
-              name="email"
-              label="Email"
-              type="email"
-              value={values.email}
+              name="tenantCode"
+              label="Tenant Code"
+              value={values.tenantCode}
               onChange={handleChange}
               onBlur={handleBlur}
-              error={Boolean(touched.email && errors.email)}
-              helperText={touched.email && errors.email}
+              error={Boolean(touched.tenantCode && errors.tenantCode)}
+              helperText={touched.tenantCode && errors.tenantCode}
+              sx={{ mb: 2 }}
+            />
+
+            <TextField
+              fullWidth
+              size="small"
+              name="usernameOrEmail"
+              label="Username atau Email"
+              value={values.usernameOrEmail}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(touched.usernameOrEmail && errors.usernameOrEmail)}
+              helperText={touched.usernameOrEmail && errors.usernameOrEmail}
               sx={{ mb: 3 }}
             />
 

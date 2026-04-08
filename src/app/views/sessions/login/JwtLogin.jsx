@@ -54,9 +54,9 @@ export default function JwtLogin() {
   return (
     <AuthLayout
       title="Welcome back"
-      subtitle="Sign in to manage projects, approvals, tasks, and your account."
+      subtitle="Masuk untuk mengelola dashboard koperasi, anggota, produk simpanan, dan produk pinjaman."
       image="/assets/images/icon.svg"
-      imageAlt="MTA CheckSheet"
+      imageAlt="Koperasi dashboard"
       footer={
         <Paragraph color="text.secondary">
           Don&apos;t have an account?

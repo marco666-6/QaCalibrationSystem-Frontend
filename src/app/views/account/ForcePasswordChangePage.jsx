@@ -10,12 +10,12 @@ import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 
 import useAuth from "app/hooks/useAuth";
-import { useChangePassword } from "app/hooks/useAccount";
+import { useChangePassword } from "app/hooks/useProfile";
 
 const validationSchema = Yup.object({
   currentPassword: Yup.string().required("Current password is required"),
   newPassword: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters")
     .required("New password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("newPassword")], "Passwords must match")
@@ -37,10 +37,7 @@ export default function ForcePasswordChangePage() {
     onSubmit: async (values) => {
       await changePasswordMutation.mutateAsync({
         currentPassword: values.currentPassword,
-        oldPassword: values.currentPassword,
-        password: values.newPassword,
         newPassword: values.newPassword,
-        confirmPassword: values.confirmPassword,
         confirmNewPassword: values.confirmPassword
       });
 
