@@ -1,5 +1,6 @@
 import { Link as RouterLink } from "react-router-dom";
 import {
+  alpha,
   Box,
   Card,
   CardContent,
@@ -18,27 +19,43 @@ import {
 
 export function PageFrame({ section, title, description, action, children }) {
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
-      <Stack spacing={2}>
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          justifyContent="space-between"
-          alignItems={{ xs: "flex-start", md: "flex-start" }}
-          spacing={1.5}
+    <Box sx={{ px: { xs: 2, md: 3 }, py: { xs: 2, md: 3 }, maxWidth: 1800, mx: "auto" }}>
+      <Stack spacing={2.5}>
+        <Paper
+          variant="outlined"
+          sx={{
+            p: { xs: 2, md: 2.5 },
+            borderRadius: 5,
+            borderColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+            backgroundImage: (theme) =>
+              `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(
+                theme.palette.background.paper,
+                1
+              )} 55%)`,
+            boxShadow: (theme) => `0 20px 50px ${alpha(theme.palette.common.black, 0.05)}`
+          }}
         >
-          <Box>
-            <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 700, lineHeight: 1.2 }}>
-              {section}
-            </Typography>
-            <Typography variant="h5" fontWeight={700} sx={{ lineHeight: 1.2 }}>
-              {title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth: 760 }}>
-              {description}
-            </Typography>
-          </Box>
-          {action ? <Box sx={{ flexShrink: 0 }}>{action}</Box> : null}
-        </Stack>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", md: "flex-start" }}
+            spacing={2}
+          >
+            <Box>
+              <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 800, lineHeight: 1.2 }}>
+                {section}
+              </Typography>
+              <Typography variant="h4" fontWeight={800} sx={{ lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+                {title}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mt: 0.75, maxWidth: 820 }}>
+                {description}
+              </Typography>
+            </Box>
+            {action ? <Box sx={{ flexShrink: 0, width: { xs: "100%", md: "auto" } }}>{action}</Box> : null}
+          </Stack>
+        </Paper>
+
         {children}
       </Stack>
     </Box>
@@ -47,7 +64,16 @@ export function PageFrame({ section, title, description, action, children }) {
 
 export function SectionCard({ title, description, children, actions, sx }) {
   return (
-    <Paper variant="outlined" sx={{ p: 3, borderRadius: 4, ...sx }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 3,
+        borderRadius: 4,
+        borderColor: (theme) => alpha(theme.palette.primary.main, 0.1),
+        boxShadow: (theme) => `0 16px 40px ${alpha(theme.palette.common.black, 0.04)}`,
+        ...sx
+      }}
+    >
       <Stack spacing={2.5} sx={{ height: "100%", minHeight: 0 }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
@@ -71,13 +97,27 @@ export function SectionCard({ title, description, children, actions, sx }) {
   );
 }
 
-export function MetricCard({ icon, title, value, caption }) {
+export function MetricCard({ icon, title, value, caption, sx }) {
   return (
-    <Card variant="outlined" sx={{ height: "100%", borderRadius: 4 }}>
+    <Card
+      variant="outlined"
+      sx={{
+        height: "100%",
+        borderRadius: 4,
+        borderColor: (theme) => alpha(theme.palette.primary.main, 0.1),
+        backgroundImage: (theme) =>
+          `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(
+            theme.palette.background.paper,
+            1
+          )} 100%)`,
+        boxShadow: (theme) => `0 16px 36px ${alpha(theme.palette.common.black, 0.04)}`,
+        ...sx
+      }}
+    >
       <CardContent>
         <Stack direction="row" justifyContent="space-between" spacing={2}>
           <Box>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
               {title}
             </Typography>
             <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
@@ -94,7 +134,7 @@ export function MetricCard({ icon, title, value, caption }) {
               display: "grid",
               placeItems: "center",
               borderRadius: 3,
-              bgcolor: "primary.50",
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
               color: "primary.main"
             }}
           >

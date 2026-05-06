@@ -122,9 +122,9 @@ const Layout1Topbar = () => {
             }
           >
             <StyledItem>
-              <Link to="/operasional/workspace">
+              <Link to="/dashboard">
                 <Home />
-                <Span sx={{ marginInlineStart: 1 }}>Workspace</Span>
+                <Span sx={{ marginInlineStart: 1 }}>Dashboard</Span>
               </Link>
             </StyledItem>
 
