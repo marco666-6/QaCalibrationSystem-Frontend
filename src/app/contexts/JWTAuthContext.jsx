@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import Loading from "app/components/MatxLoading";
-import { getTenantCode, loginUser, registerMember } from "/src/api/auth";
+import { loginUser, registerUser } from "/src/api/auth";
 import { getMyProfile } from "/src/api/profile";
 
 const initialState = {
@@ -21,7 +21,14 @@ const claim = (decodedToken, ...keys) => {
 const isValidToken = (accessToken) => {
   if (!accessToken) return false;
   const decodedToken = jwtDecode(accessToken);
-  return Boolean(decodedToken?.sub);
+  return Boolean(
+    claim(
+      decodedToken,
+      "sub",
+      "nameid",
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+    )
+  );
 };
 
 const setSession = (accessToken, refreshToken) => {
@@ -40,19 +47,15 @@ const setSession = (accessToken, refreshToken) => {
 const buildUser = (data) => ({
   id: data.userId ?? data.id,
   username: data.username,
-  fullName: data.displayName ?? data.fullName ?? data.name,
-  displayName: data.displayName ?? data.fullName ?? data.name,
+  fullName: data.fullName ?? data.employeeName ?? data.displayName ?? data.name,
+  displayName: data.fullName ?? data.employeeName ?? data.displayName ?? data.name ?? data.username,
   email: data.email,
   role: Array.isArray(data.roles) ? data.roles[0] : data.role,
   roles: data.roles ?? (data.role ? [data.role] : []),
   employeeId: data.employeeCode ?? data.employeeId,
-  tenantId: data.tenantId,
-  tenantCode: data.tenantCode ?? getTenantCode(),
-  userType: data.userType,
-  memberId: data.memberId,
+  employeeCode: data.employeeCode,
   mustChangePassword: Boolean(data.mustChangePassword),
-  isActive: data.isActive,
-  phoneNumber: data.phoneNumber
+  isActive: data.isActive
 });
 
 const reducer = (state, action) => {
@@ -91,12 +94,10 @@ export const AuthProvider = ({ children }) => {
     username,
     password,
     confirmPassword = password,
-    memberNo = username,
-    tenantCode = getTenantCode()
+    employeeCode = ""
   ) => {
-    const response = await registerMember({
-      tenantCode,
-      memberNo,
+    const response = await registerUser({
+      employeeCode,
       username,
       email,
       password,
@@ -136,15 +137,12 @@ export const AuthProvider = ({ children }) => {
             user = buildUser({
               id: claim(decoded, "sub", "nameid"),
               username: claim(decoded, "unique_name", "username"),
-              displayName: claim(decoded, "name", "display_name", "fullName"),
+              fullName: claim(decoded, "name", "display_name", "fullName"),
               email: claim(decoded, "email"),
               roles: claim(decoded, "roles") ?? [
                 claim(decoded, "role", "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
               ].filter(Boolean),
               employeeCode: claim(decoded, "employee_code", "employeeId"),
-              tenantId: claim(decoded, "tenant_id", "tenantId"),
-              memberId: claim(decoded, "member_id", "memberId"),
-              userType: claim(decoded, "user_type", "userType"),
               mustChangePassword: claim(decoded, "mustChangePassword", "must_change_password", "force_password_change")
             });
           }

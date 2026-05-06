@@ -20,9 +20,8 @@ import useAuth from "app/hooks/useAuth";
 import { useChangePassword, useMyProfile, useUpdateMyProfile } from "app/hooks/useProfile";
 
 const profileSchema = Yup.object({
-  fullName: Yup.string().max(150, "Full name is too long").required("Full name is required"),
+  username: Yup.string().max(100, "Username is too long").required("Username is required"),
   email: Yup.string().email("Enter a valid email").required("Email is required"),
-  phoneNumber: Yup.string().max(50, "Phone number is too long").nullable()
 });
 
 const passwordSchema = Yup.object({
@@ -38,12 +37,10 @@ const passwordSchema = Yup.object({
 const normalizeProfile = (data, fallbackUser) => ({
   id: data?.userId ?? data?.id ?? fallbackUser?.id,
   username: data?.username ?? fallbackUser?.username ?? "",
-  fullName: data?.displayName ?? data?.fullName ?? data?.fullname ?? data?.name ?? fallbackUser?.fullName ?? "",
+  fullName: data?.fullName ?? data?.employeeName ?? fallbackUser?.fullName ?? "",
   email: data?.email ?? fallbackUser?.email ?? "",
   role: data?.roles?.[0] ?? data?.role ?? fallbackUser?.role ?? "",
   employeeId: data?.employeeCode ?? data?.employeeId ?? fallbackUser?.employeeId ?? "",
-  phoneNumber: data?.phoneNumber ?? fallbackUser?.phoneNumber ?? "",
-  department: data?.department ?? fallbackUser?.department ?? "",
   mustChangePassword: Boolean(data?.mustChangePassword ?? fallbackUser?.mustChangePassword)
 });
 
@@ -67,25 +64,22 @@ export default function ProfilePage() {
 
   const profileFormik = useFormik({
     initialValues: {
-      fullName: profile.fullName,
-      email: profile.email,
-      phoneNumber: profile.phoneNumber
+      username: profile.username,
+      email: profile.email
     },
     enableReinitialize: true,
     validationSchema: profileSchema,
     onSubmit: async (values) => {
       await updateProfileMutation.mutateAsync({
-        username: profile.username,
-        displayName: values.fullName.trim(),
-        email: values.email.trim(),
-        phoneNumber: values.phoneNumber?.trim() || null
+        username: values.username.trim(),
+        email: values.email.trim()
       });
 
       refreshUser({
         ...profile,
-        fullName: values.fullName.trim(),
+        username: values.username.trim(),
         email: values.email.trim(),
-        phoneNumber: values.phoneNumber?.trim() || null
+        displayName: profile.fullName || values.username.trim()
       });
     }
   });
@@ -166,7 +160,7 @@ export default function ProfilePage() {
                   Personal Information
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75, mb: 3 }}>
-                  Keep your contact information current so the system and approvals can identify you correctly.
+                  Keep your account identity current so calibration workflows and audit history stay accurate.
                 </Typography>
 
                 <form
@@ -177,13 +171,19 @@ export default function ProfilePage() {
                     <TextField fullWidth label="Username" value={profile.username} disabled />
                     <TextField
                       fullWidth
-                      name="fullName"
                       label="Full Name"
-                      value={profileFormik.values.fullName}
+                      value={profile.fullName || "-"}
+                      disabled
+                    />
+                    <TextField
+                      fullWidth
+                      name="username"
+                      label="Username"
+                      value={profileFormik.values.username}
                       onChange={profileFormik.handleChange}
                       onBlur={profileFormik.handleBlur}
-                      error={Boolean(profileFormik.touched.fullName && profileFormik.errors.fullName)}
-                      helperText={profileFormik.touched.fullName && profileFormik.errors.fullName}
+                      error={Boolean(profileFormik.touched.username && profileFormik.errors.username)}
+                      helperText={profileFormik.touched.username && profileFormik.errors.username}
                     />
                     <TextField
                       fullWidth
@@ -196,19 +196,9 @@ export default function ProfilePage() {
                       error={Boolean(profileFormik.touched.email && profileFormik.errors.email)}
                       helperText={profileFormik.touched.email && profileFormik.errors.email}
                     />
-                    <TextField
-                      fullWidth
-                      name="phoneNumber"
-                      label="Phone Number"
-                      value={profileFormik.values.phoneNumber}
-                      onChange={profileFormik.handleChange}
-                      onBlur={profileFormik.handleBlur}
-                      error={Boolean(profileFormik.touched.phoneNumber && profileFormik.errors.phoneNumber)}
-                      helperText={profileFormik.touched.phoneNumber && profileFormik.errors.phoneNumber}
-                    />
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                      <TextField fullWidth label="Employee ID" value={profile.employeeId || "-"} disabled />
-                      <TextField fullWidth label="Department" value={profile.department || "-"} disabled />
+                      <TextField fullWidth label="Employee Code" value={profile.employeeId || "-"} disabled />
+                      <TextField fullWidth label="Role" value={profile.role || "-"} disabled />
                     </Stack>
                     <Box sx={{ mt: "auto", pt: 1 }}>
                       <Button type="submit" variant="contained" disabled={updateProfileMutation.isPending}>

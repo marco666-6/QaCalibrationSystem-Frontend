@@ -22,11 +22,13 @@ export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const resetPasswordMutation = useResetPassword();
   const token = searchParams.get("token") || searchParams.get("code") || "";
-  const missingToken = useMemo(() => token.trim().length === 0, [token]);
+  const email = searchParams.get("email") || "";
+  const missingPayload = useMemo(() => token.trim().length === 0 || email.trim().length === 0, [email, token]);
 
   const handleSubmit = async (values) => {
     await resetPasswordMutation.mutateAsync({
-      resetToken: token,
+      token,
+      email,
       newPassword: values.password,
       confirmNewPassword: values.confirmPassword
     });
@@ -52,9 +54,9 @@ export default function ResetPassword() {
         </Paragraph>
       }
     >
-      {missingToken ? (
+      {missingPayload ? (
         <Alert severity="warning">
-          This reset link is incomplete. Open the password reset link from your email again.
+          This reset link is incomplete. Open the password reset email again and use the full URL.
         </Alert>
       ) : (
         <Formik
@@ -73,7 +75,7 @@ export default function ResetPassword() {
           }) => (
             <form onSubmit={submitForm}>
               <Alert severity="info" sx={{ mb: 2 }}>
-                Tautan reset sudah valid. Silakan set password baru.
+                Reset link verified for {email}. Set a new password to continue.
               </Alert>
 
               <TextField

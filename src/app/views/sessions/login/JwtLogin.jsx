@@ -54,17 +54,9 @@ export default function JwtLogin() {
   return (
     <AuthLayout
       title="Welcome back"
-      subtitle="Masuk untuk mengelola dashboard koperasi, anggota, produk simpanan, dan produk pinjaman."
+      subtitle="Sign in to manage calibration equipment, master data, and system users."
       image="/assets/images/icon.svg"
-      imageAlt="Koperasi dashboard"
-      footer={
-        <Paragraph color="text.secondary">
-          Don&apos;t have an account?
-          <Link component={NavLink} to="/session/signup" sx={{ ml: 0.75 }}>
-            Register
-          </Link>
-        </Paragraph>
-      }
+      imageAlt="Calibration dashboard"
     >
       <Formik
         onSubmit={handleFormSubmit}

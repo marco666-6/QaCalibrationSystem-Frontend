@@ -4,18 +4,15 @@ import * as Yup from "yup";
 import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { getTenantCode } from "/src/api/auth";
 import { useForgotPassword } from "app/hooks/useProfile";
 import AuthLayout from "./components/AuthLayout";
 
 const initialValues = {
-  tenantCode: getTenantCode(),
-  usernameOrEmail: ""
+  email: ""
 };
 
 const validationSchema = Yup.object({
-  tenantCode: Yup.string().required("Tenant code is required"),
-  usernameOrEmail: Yup.string().required("Username atau email wajib diisi")
+  email: Yup.string().email("Enter a valid email").required("Email is required")
 });
 
 export default function ForgotPassword() {
@@ -24,8 +21,7 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (values, { resetForm }) => {
     const response = await forgotPasswordMutation.mutateAsync({
-      tenantCode: values.tenantCode.trim(),
-      usernameOrEmail: values.usernameOrEmail.trim()
+      email: values.email.trim()
     });
 
     setSuccessMessage(
@@ -38,9 +34,9 @@ export default function ForgotPassword() {
   return (
     <AuthLayout
       title="Forgot your password?"
-      subtitle="Masukkan tenant code dan username atau email sesuai kontrak backend autentikasi."
+      subtitle="Enter the email address attached to your calibration account."
       image="/assets/images/icon.svg"
-      imageAlt="Koperasi auth"
+      imageAlt="Calibration auth"
     >
       <Formik
         initialValues={initialValues}
@@ -66,26 +62,14 @@ export default function ForgotPassword() {
             <TextField
               fullWidth
               size="small"
-              name="tenantCode"
-              label="Tenant Code"
-              value={values.tenantCode}
+              name="email"
+              label="Email"
+              type="email"
+              value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
-              error={Boolean(touched.tenantCode && errors.tenantCode)}
-              helperText={touched.tenantCode && errors.tenantCode}
-              sx={{ mb: 2 }}
-            />
-
-            <TextField
-              fullWidth
-              size="small"
-              name="usernameOrEmail"
-              label="Username atau Email"
-              value={values.usernameOrEmail}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={Boolean(touched.usernameOrEmail && errors.usernameOrEmail)}
-              helperText={touched.usernameOrEmail && errors.usernameOrEmail}
+              error={Boolean(touched.email && errors.email)}
+              helperText={touched.email && errors.email}
               sx={{ mb: 3 }}
             />
 

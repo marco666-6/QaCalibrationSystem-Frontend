@@ -62,7 +62,7 @@ export default function ForcePasswordChangePage() {
           Change your password
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          An administrator marked your account to require a password change before continuing.
+          Your account is marked to require a password change before continuing.
         </Typography>
 
         <Alert severity="info" sx={{ mt: 3 }}>
