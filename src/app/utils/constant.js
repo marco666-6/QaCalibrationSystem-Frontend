@@ -4,59 +4,42 @@ export const navbarHeight = 60;
 export const sidenavCompactWidth = 80;
 export const containedLayoutWidth = 1200;
 
-export const PROJECT_STATUS = ["active", "archived", "completed"];
+export const CALIBRATION_TYPES = ["Internal", "External"];
+export const PLAN_STATUSES = ["Draft", "Pending Approval", "Locked"];
+export const ACTUAL_STATUSES = ["Wait", "Ongoing", "Completed"];
+export const APPROVAL_STATUSES = ["Pending", "Approved"];
+export const RESULT_STATUSES = ["Pending", "OK", "NG"];
+export const NG_ACTIONS = ["Repair", "Replacement", "Out of Service", "Scrap"];
+export const EQUIPMENT_STATUSES = ["Active", "Out of Service", "Scrap"];
+export const CALIBRATION_ROLES = ["Preparer", "Checker", "Approver", "Technician"];
+export const USER_ROLES = ["SuperAdmin", "Admin", "Manager", "Employee"];
+export const SECTION_PIC_ROLES = ["PIC", "Admin"];
 
-export const TASK_STATUS = ["not_started", "in_progress", "done", "blocked"];
-
-export const CATEGORY_VISIBILITY = ["global", "department", "private"];
-
-export const MEMBER_ROLES = ["owner", "manager", "editor", "viewer"];
-
-export const COLUMN_TYPES = ["free_text", "option", "checkbox"];
-
-export const PLACEMENT_ZONES = ["after_task", "after_timeline"];
-
-export const TASK_STATUS_COLOR = {
-  not_started: "default",
-  in_progress: "info",
-  done: "success",
-  blocked: "error"
+export const PLAN_STATUS_COLORS = {
+  Draft: "default",
+  "Pending Approval": "warning",
+  Locked: "success"
 };
 
-export const TASK_STATUS_LABEL = {
-  not_started: "Not Started",
-  in_progress: "In Progress",
-  done: "Done",
-  blocked: "Blocked"
+export const ACTUAL_STATUS_COLORS = {
+  Wait: "default",
+  Ongoing: "info",
+  Completed: "success"
 };
 
-export const PROJECT_STATUS_COLOR = {
-  active: "success",
-  archived: "default",
-  completed: "primary"
+export const APPROVAL_STATUS_COLORS = {
+  Pending: "warning",
+  Approved: "success"
 };
 
-export const PROJECT_STATUS_LABEL = {
-  active: "Active",
-  archived: "Archived",
-  completed: "Completed"
+export const RESULT_STATUS_COLORS = {
+  Pending: "default",
+  OK: "success",
+  NG: "error"
 };
 
-export const CATEGORY_VISIBILITY_LABEL = {
-  global: "Global",
-  department: "Department",
-  private: "Private"
-};
-
-export const CATEGORY_VISIBILITY_COLOR = {
-  global: "primary",
-  department: "info",
-  private: "warning"
-};
-
-export const ROLE_COLOR = {
-  owner: "error",
-  manager: "warning",
-  editor: "info",
-  viewer: "default"
+export const EQUIPMENT_STATUS_COLORS = {
+  Active: "success",
+  "Out of Service": "warning",
+  Scrap: "error"
 };

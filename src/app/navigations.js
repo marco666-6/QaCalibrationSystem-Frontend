@@ -9,16 +9,20 @@ const navigations = [
         path: "/dashboard"
       },
       {
+        name: "Plans",
+        iconText: "PL",
+        path: "/calibration-plans"
+      },
+      {
+        name: "Actuals",
+        iconText: "AC",
+        path: "/calibration-actuals"
+      },
+      {
         name: "Equipments",
         iconText: "EQ",
         path: "/equipments"
-      }
-    ]
-  },
-  {
-    name: "Configuration",
-    icon: "tune",
-    children: [
+      },
       {
         name: "Master Data",
         iconText: "MD",

@@ -91,11 +91,11 @@ apiClient.interceptors.response.use(
       }
     }
 
-    const message =
-      error.response?.data?.message ||
-      error.response?.data?.errors?.[0] ||
-      error.message ||
-      "An unexpected error occurred";
+    const responseData = error.response?.data;
+    const validationErrors = Array.isArray(responseData?.errors) ? responseData.errors.filter(Boolean) : [];
+    const message = validationErrors.length
+      ? [responseData?.message || "Validation failed.", ...validationErrors].join(" ")
+      : responseData?.message || error.message || "An unexpected error occurred";
 
     if (error.response?.status === 401) {
       localStorage.removeItem("accessToken");
@@ -105,6 +105,7 @@ apiClient.interceptors.response.use(
 
     const enhancedError = new Error(message);
     enhancedError.response = error.response;
+    enhancedError.details = validationErrors;
     return Promise.reject(enhancedError);
   }
 );

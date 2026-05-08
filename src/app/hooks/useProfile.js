@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSnackbar } from "notistack";
 import { changePassword, forgotPassword, resetPassword } from "/src/api/auth";
 import { getMyProfile, updateMyProfile } from "/src/api/profile";
 import { unwrapData } from "/src/api/response";
+import { notifyError, notifySuccess } from "app/utils/notify";
 
 export const PROFILE_KEYS = {
   profile: ["profile"]
@@ -18,76 +18,54 @@ export const useMyProfile = (options = {}) =>
 
 export const useUpdateMyProfile = () => {
   const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
 
   return useMutation({
     mutationFn: updateMyProfile,
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.profile });
-      enqueueSnackbar(response?.message || "Profil berhasil diperbarui.", {
-        variant: "success"
-      });
+      notifySuccess(response?.message || "Profil berhasil diperbarui.");
     },
     onError: (error) => {
-      enqueueSnackbar(error.message || "Gagal memperbarui profil.", {
-        variant: "error"
-      });
+      notifyError(error.message || "Gagal memperbarui profil.");
     }
   });
 };
 
 export const useForgotPassword = () => {
-  const { enqueueSnackbar } = useSnackbar();
-
   return useMutation({
     mutationFn: forgotPassword,
     onSuccess: (response) => {
-      enqueueSnackbar(response?.message || "Instruksi reset password berhasil dikirim.", {
-        variant: "success"
-      });
+      notifySuccess(response?.message || "Instruksi reset password berhasil dikirim.");
     },
     onError: (error) => {
-      enqueueSnackbar(error.message || "Gagal mengirim instruksi reset password.", {
-        variant: "error"
-      });
+      notifyError(error.message || "Gagal mengirim instruksi reset password.");
     }
   });
 };
 
 export const useResetPassword = () => {
-  const { enqueueSnackbar } = useSnackbar();
-
   return useMutation({
     mutationFn: resetPassword,
     onSuccess: (response) => {
-      enqueueSnackbar(response?.message || "Password berhasil direset.", {
-        variant: "success"
-      });
+      notifySuccess(response?.message || "Password berhasil direset.");
     },
     onError: (error) => {
-      enqueueSnackbar(error.message || "Gagal mereset password.", {
-        variant: "error"
-      });
+      notifyError(error.message || "Gagal mereset password.");
     }
   });
 };
 
 export const useChangePassword = () => {
   const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
 
   return useMutation({
     mutationFn: changePassword,
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.profile });
-      enqueueSnackbar(response?.message || "Password berhasil diubah.", {
-        variant: "success"
-      });
+      notifySuccess(response?.message || "Password berhasil diubah.");
     },
     onError: (error) => {
-      enqueueSnackbar(error.message || "Gagal mengubah password.", {
-        variant: "error"
-      });
+      notifyError(error.message || "Gagal mengubah password.");
     }
   });
 };
